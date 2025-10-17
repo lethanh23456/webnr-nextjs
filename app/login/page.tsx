@@ -69,11 +69,8 @@ function Login() {
 
         alert(result.message || 'Đăng nhập thành công!');
 
-        if (userData.role === "ADMIN") {
-          router.push('/admin');
-        } else {
-          router.push('/user');
-        }
+        router.push('/user');
+        
 
       } else {
         alert(result.error);
