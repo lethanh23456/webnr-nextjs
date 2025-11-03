@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Backend URL - đọc từ biến môi trường hoặc dùng localhost
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    console.log('Forwarding to backend:', `${BACKEND_URL}/auth/register`);
+    console.log('Request body:', body);
     
     // Gọi backend API
     const response = await fetch(`${BACKEND_URL}/auth/register`, {
@@ -16,6 +20,8 @@ export async function POST(request: NextRequest) {
     });
     
     const data = await response.json();
+    
+    console.log('Backend response:', data);
     
     return NextResponse.json(data, { status: response.status });
   } catch (error: any) {
