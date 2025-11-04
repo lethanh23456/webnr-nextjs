@@ -81,7 +81,7 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative bg-cover bg-center" style={{ backgroundImage: "url('/assets/br.jpg')" }}>
-      <div className="bg-white/[0.08] backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(124,58,237,0.3)] rounded-3xl p-8 w-full max-w-[420px] relative z-10 translate-y-0 transition-all duration-[400ms] hover:translate-y-[-8px] hover:shadow-[0_0_20px_rgba(124,58,237,0.4),0_0_40px_rgba(124,58,237,0.12),0_0_80px_rgba(124,58,237,0.04)] sm:p-6 sm:mx-4" style={{ transitionTimingFunction: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)' }}>
+      <div className="bg-white/[0.08] backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(124,58,237,0.3)] rounded-3xl p-8 w-full max-w-[420px] relative z-10 hover:shadow-[0_0_20px_rgba(124,58,237,0.4),0_0_40px_rgba(124,58,237,0.12),0_0_80px_rgba(124,58,237,0.04)] sm:p-6 sm:mx-4" style={{ transitionTimingFunction: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)' }}>
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-[2.5rem] sm:text-[2rem] font-extrabold bg-gradient-to-br from-amber-400 via-orange-500 to-pink-500 bg-clip-text text-transparent mb-2 animate-[titleGlow_3s_ease-in-out_infinite_alternate]">
@@ -179,7 +179,7 @@ function Login() {
             {loading ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
-              <span className="text-xl">➡️</span>
+              <span className="text-xl"></span>
             )}
             {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>

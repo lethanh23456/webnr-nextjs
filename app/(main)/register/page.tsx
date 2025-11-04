@@ -251,7 +251,7 @@ function Register() {
             {loading ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
-              <span className="text-xl">✨</span>
+              <span className="text-xl"></span>
             )}
             {loading ? 'Đang đăng ký...' : 'Đăng Ký'}
           </button>
