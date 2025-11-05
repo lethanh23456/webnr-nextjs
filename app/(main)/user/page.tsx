@@ -1,206 +1,256 @@
-// "use client"
-// import React, { useState, useEffect } from 'react';
-// import { useRouter } from 'next/navigation'
-// import UserService from '../../../services/userService';
+"use client";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-// interface User {
-//   username: string;
-//   displayName?: string;
+interface UserData {
+  danhSachVatPhamWeb: any[];
+  id: number;
+  vang: { low: number; high: number; unsigned: boolean };
+  ngoc: { low: number; high: number; unsigned: boolean };
+  sucManh: { low: number; high: number; unsigned: boolean };
+  vangNapTuWeb: { low: number; high: number; unsigned: boolean };
+  ngocNapTuWeb: { low: number; high: number; unsigned: boolean };
+  x: number;
+  y: number;
+  mapHienTai: string;
+  daVaoTaiKhoanLanDau: boolean;
+  coDeTu: boolean;
+  auth_id: number;
+}
 
-//   role?: string;
-// }
+interface ApiResponse {
+  user: UserData;
+}
 
-// type DepositType = 'vang' | 'ngoc';
+export default function User() {
+  const router = useRouter();
+  const [user, setUser] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-// function User() {
-//   const [user, setUser] = useState<User | null>(null);
-//   const [currentBalance, setCurrentBalance] = useState<number>(0);
-//   const [vangNapTuWeb, setVangNapTuWeb] = useState<number>(0);
-//   const [ngocNapTuWeb, setNgocNapTuWeb] = useState<number>(0);
-//   const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
-//   const [depositAmount, setDepositAmount] = useState<string>('');
-//   const [depositType, setDepositType] = useState<DepositType>('vang');
-//   const [loading, setLoading] = useState<boolean>(false);
-//   const [initialLoading, setInitialLoading] = useState<boolean>(true);
-  
-//   const router = useRouter();
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
 
-//   useEffect(() => {
-//     loadUserFromStorage();
-//   }, []);
+  const refreshAccessToken = async (refreshToken: string) => {
+    const res = await fetch("/api/refresh", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!res.ok) throw new Error("Làm mới token thất bại");
+    const data = await res.json();
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    currentUser.access_token = data.access_token;
+    currentUser.refresh_token = data.refresh_token;
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    return data.access_token;
+  };
 
-//   useEffect(() => {
-//     if (user?.username) {
-//       loadBalance();
-//     }
-//   }, [user]);
+  const fetchUserProfile = async (isRetry = false) => {
+    setLoading(true);
+    setError("");
 
-//   const loadUserFromStorage = () => {
-//     setInitialLoading(true);
-//     const savedUser = localStorage.getItem('currentUser');
-//     if (savedUser) {
-//       setUser(JSON.parse(savedUser));
-//     }
-//     setInitialLoading(false);
-//   };
+    const stored = localStorage.getItem("currentUser");
+    if (!stored) {
+      setError("Không tìm thấy thông tin đăng nhập");
+      router.push("/login");
+      return;
+    }
 
-//   const loadBalance = () => {
-//     if (!user?.username) return;
-//     setLoading(true);
-//     UserService.getBalance(user.username)
-//       .then(result => {
-//         if (result.success) {
-//           setVangNapTuWeb(result.data.vangNapTuWeb || 0);
-//           setNgocNapTuWeb(result.data.ngocNapTuWeb || 0);
-//           setCurrentBalance(result.data.currentBalance || 0);
-//         }
-//       })
-//       .catch(console.error)
-//       .finally(() => setLoading(false));
-//   };
+    const userData = JSON.parse(stored);
+    const authId = userData.auth_id;
+    let accessToken = userData.access_token;
+    const refreshToken = userData.refresh_token;
 
-//   const handleLogout = () => {
-//     localStorage.removeItem('currentUser');
-//     setUser(null);
-//     router.push('/login');
-//   };
+    const res = await fetch(`/api/profile/${authId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-//   const handleDeposit = () => {
-//     if (!user?.username) return;
+    if (res.status === 401 && !isRetry && refreshToken) {
+      accessToken = await refreshAccessToken(refreshToken);
+      return fetchUserProfile(true);
+    }
 
-//     const validation = UserService.validateDepositAmount(depositAmount);
-//     if (!validation.isValid) return;
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || `Lỗi máy chủ (${res.status})`);
+      setLoading(false);
+      return;
+    }
 
-//     setLoading(true);
-//     const action =
-//       depositType === 'vang'
-//         ? UserService.addVangNapTuWeb(user.username, validation.amount!)
-//         : UserService.addNgocNapTuWeb(user.username, validation.amount!);
+    const data: ApiResponse = await res.json();
+    if (data.user) setUser(data.user);
+    else setError("Dữ liệu phản hồi không hợp lệ");
 
-//     action
-//       .then(result => {
-//         if (result.success && result.data) {
-//           if (depositType === 'vang') setVangNapTuWeb(result.data.totalVangNapTuWeb!);
-//           else setNgocNapTuWeb(result.data.totalNgocNapTuWeb!);
-//           setDepositAmount('');
-//           setShowDepositModal(false);
-//         }
-//       })
-//       .catch(console.error)
-//       .finally(() => setLoading(false));
-//   };
+    setLoading(false);
+  };
 
-//   const formatNumber = (num: number): string =>
-//     new Intl.NumberFormat('vi-VN').format(num);
+  const formatNumber = (v: { low: number }) => v.low.toLocaleString();
 
-//   const formatCurrency = (amount: number): string =>
-//     new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin h-16 w-16 border-b-2 border-blue-500 mx-auto rounded-full"></div>
+          <p className="mt-4 text-gray-600">Đang tải thông tin...</p>
+        </div>
+      </div>
+    );
 
-//   useEffect(() => {
-//     if (!initialLoading && !user) {
-//       router.push('/register');
-//     }
-//   }, [initialLoading, user, router]);
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full text-center text-red-500">
+          <svg
+            className="w-16 h-16 mx-auto mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h2 className="text-2xl font-bold mb-2">Lỗi</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => fetchUserProfile()}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded"
+          >
+            Thử lại
+          </button>
+        </div>
+      </div>
+    );
 
-//   if (initialLoading || !user) {
-//     return (
-//       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-//         <p className="text-gray-600">Đang tải thông tin người dùng...</p>
-//       </div>
-//     );
-//   }
+  if (!user)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-600">
+        Không tìm thấy thông tin người dùng
+      </div>
+    );
 
-//   return (
-//     <div className="min-h-screen bg-gray-100 py-10 px-4">
-//       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-//         {/* Header */}
-//         <div className="flex justify-between items-center border-b pb-4 mb-4">
-//           <h1 className="text-2xl font-semibold text-gray-800">Xin chào, {user.displayName || user.username}</h1>
-//           <button
-//             onClick={handleLogout}
-//             className="text-red-600 hover:text-red-800 font-medium"
-//           >
-//             Đăng xuất
-//           </button>
-//         </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-10 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Thông tin nhân vật
+            </h1>
+            <p className="text-gray-500 mt-1">
+              ID: {user.id} | Auth ID: {user.auth_id}
+            </p>
+          </div>
+          <button
+            onClick={() => fetchUserProfile()}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            Làm mới
+          </button>
+        </div>
 
-//         {/* Balance Section */}
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-//           <div className="bg-yellow-50 border border-yellow-300 p-4 rounded-lg text-center">
-//             <p className="text-sm text-gray-600">Vàng nạp từ web</p>
-//             <p className="text-xl font-bold text-yellow-700">{formatNumber(vangNapTuWeb)}</p>
-//           </div>
-//           <div className="bg-purple-50 border border-purple-300 p-4 rounded-lg text-center">
-//             <p className="text-sm text-gray-600">Ngọc nạp từ web</p>
-//             <p className="text-xl font-bold text-purple-700">{formatNumber(ngocNapTuWeb)}</p>
-//           </div>
-//           <div className="bg-green-50 border border-green-300 p-4 rounded-lg text-center">
-//             <p className="text-sm text-gray-600">Số dư hiện tại</p>
-//             <p className="text-xl font-bold text-green-700">{formatCurrency(currentBalance)}</p>
-//           </div>
-//         </div>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white rounded-lg shadow-lg p-6">
+            <p className="text-sm text-yellow-100">Vàng</p>
+            <p className="text-3xl font-bold">{formatNumber(user.vang)}</p>
+            <p className="text-xs text-yellow-100 mt-1">
+              Nạp từ web: {formatNumber(user.vangNapTuWeb)}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-400 to-purple-600 text-white rounded-lg shadow-lg p-6">
+            <p className="text-sm text-purple-100">Ngọc</p>
+            <p className="text-3xl font-bold">{formatNumber(user.ngoc)}</p>
+            <p className="text-xs text-purple-100 mt-1">
+              Nạp từ web: {formatNumber(user.ngocNapTuWeb)}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-red-400 to-red-600 text-white rounded-lg shadow-lg p-6">
+            <p className="text-sm text-red-100">Sức mạnh</p>
+            <p className="text-3xl font-bold">{formatNumber(user.sucManh)}</p>
+          </div>
+        </div>
 
-//         {/* Actions */}
-//         <div className="flex flex-wrap gap-3 mb-6">
-//           <button
-//             onClick={() => { setDepositType('vang'); setShowDepositModal(true); }}
-//             disabled={loading}
-//             className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50"
-//           >
-//             Nạp Vàng
-//           </button>
-//           <button
-//             onClick={() => { setDepositType('ngoc'); setShowDepositModal(true); }}
-//             disabled={loading}
-//             className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50"
-//           >
-//             Nạp Ngọc
-//           </button>
-//           <button
-//             onClick={loadBalance}
-//             disabled={loading}
-//             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50"
-//           >
-//             Làm mới
-//           </button>
-//         </div>
+        {/* Location & Status */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">📍 Vị trí</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Map hiện tại:</span>
+                <span className="font-semibold">{user.mapHienTai}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Tọa độ X:</span>
+                <span className="font-semibold">{user.x}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Tọa độ Y:</span>
+                <span className="font-semibold">{user.y}</span>
+              </div>
+            </div>
+          </div>
 
-//       </div>
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">ℹ️ Trạng thái</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Đã vào lần đầu:</span>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    user.daVaoTaiKhoanLanDau
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {user.daVaoTaiKhoanLanDau ? "Rồi" : "Chưa"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Có đệ tử:</span>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    user.coDeTu
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {user.coDeTu ? "Có" : "Không"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Vật phẩm web:</span>
+                <span className="font-semibold">
+                  {user.danhSachVatPhamWeb.length}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-//       {/* Deposit Modal */}
-//       {showDepositModal && (
-//         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">
-//           <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-//             <h2 className="text-lg font-semibold mb-4">
-//               Nạp {depositType === 'vang' ? 'Vàng' : 'Ngọc'}
-//             </h2>
-//             <input
-//               type="number"
-//               value={depositAmount}
-//               onChange={(e) => setDepositAmount(e.target.value)}
-//               placeholder={`Nhập số ${depositType === 'vang' ? 'vàng' : 'ngọc'} muốn nạp`}
-//               className="w-full border rounded-md px-3 py-2 mb-4 focus:outline-none focus:ring focus:ring-yellow-300"
-//             />
-//             <div className="flex justify-end gap-3">
-//               <button
-//                 onClick={() => setShowDepositModal(false)}
-//                 className="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-100"
-//               >
-//                 Hủy
-//               </button>
-//               <button
-//                 onClick={handleDeposit}
-//                 disabled={loading}
-//                 className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md disabled:opacity-50"
-//               >
-//                 {loading ? 'Đang xử lý...' : 'Xác nhận'}
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default User;
+      </div>
+    </div>
+  );
+}

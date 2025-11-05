@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { json } from "stream/consumers";
 
 interface FormData {
   otp: string;
@@ -47,11 +48,17 @@ function Otp() {
       });
 
       const data = await response.json();
-      console.log("🔍 Verify OTP response:", data);
-
+      console.log("Verify OTP response:", data);
+      
+      const dataold = JSON.parse(localStorage.getItem("currentUser") || "{}");
       if (response.ok) {
+          const userData = {
+          ...dataold,
+          ...data,
+        };
+       localStorage.setItem('currentUser', JSON.stringify(userData));
         alert("✅ Nhập OTP thành công!");
-        router.push("/"); // chuyển hướng sau khi verify thành công
+        router.push("/"); 
       } else {
         const message =
           Array.isArray(data.message)
