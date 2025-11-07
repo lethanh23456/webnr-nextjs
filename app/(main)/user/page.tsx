@@ -26,7 +26,7 @@ export default function User() {
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+ 
 
   useEffect(() => {
     fetchUserProfile();
@@ -38,7 +38,6 @@ export default function User() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh_token: refreshToken }),
     });
-    if (!res.ok) throw new Error("Làm mới token thất bại");
     const data = await res.json();
     const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
     currentUser.access_token = data.access_token;
@@ -49,11 +48,11 @@ export default function User() {
 
   const fetchUserProfile = async (isRetry = false) => {
     setLoading(true);
-    setError("");
+   
 
     const stored = localStorage.getItem("currentUser");
     if (!stored) {
-      setError("Không tìm thấy thông tin đăng nhập");
+
       router.push("/login");
       return;
     }
@@ -77,14 +76,12 @@ export default function User() {
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error || `Lỗi máy chủ (${res.status})`);
       setLoading(false);
       return;
     }
 
     const data: ApiResponse = await res.json();
     if (data.user) setUser(data.user);
-    else setError("Dữ liệu phản hồi không hợp lệ");
 
     setLoading(false);
   };
@@ -97,35 +94,6 @@ export default function User() {
         <div className="text-center">
           <div className="animate-spin h-16 w-16 border-b-2 border-blue-500 mx-auto rounded-full"></div>
           <p className="mt-4 text-gray-600">Đang tải thông tin...</p>
-        </div>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-        <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full text-center text-red-500">
-          <svg
-            className="w-16 h-16 mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <h2 className="text-2xl font-bold mb-2">Lỗi</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={() => fetchUserProfile()}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded"
-          >
-            Thử lại
-          </button>
         </div>
       </div>
     );
@@ -151,22 +119,15 @@ export default function User() {
             </p>
           </div>
           <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            onClick={() => router.push("/pay")} 
+          >
+            tài khoản
+          </button>
+          <button
             onClick={() => fetchUserProfile()}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
             Làm mới
           </button>
         </div>

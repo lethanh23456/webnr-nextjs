@@ -4,18 +4,16 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
-  const authHeader = request.headers.get('authorization');
+  const { id } = await context.params;
 
+  const authHeader = request.headers.get('authorization');
   if (!authHeader) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const backendUrl = `${BACKEND_URL}/user/profile/${id}`;
-
-  const response = await fetch(backendUrl, {
+  const response = await fetch(`${BACKEND_URL}/user/profile/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
