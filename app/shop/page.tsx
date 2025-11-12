@@ -1,6 +1,5 @@
 "use client"
 import React, { useState } from 'react';
-import itemService from '../../services/itemService';
 import './shop.scss';
 import blackGoku from "../../public/assets/avt.png";
 import trungdetu from "../../public/assets/trung_de_tu.png";
@@ -43,15 +42,6 @@ function Shop() {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [sortBy, setSortBy] = useState<string>('featured');
   const [loading, setLoading] = useState<boolean>(false);
-
-  const getCurrentUsername = (): string | null => {
-    const userStr = localStorage.getItem('currentUser');
-    if (userStr) {
-      const user: User = JSON.parse(userStr);
-      return user.username;
-    }
-    return null;
-  };
 
   const items: Item[] = [
     {
@@ -182,21 +172,51 @@ function Shop() {
     : items.filter(item => item.category === selectedCategory);
 
   const handleAddToCart = async (itemId: number): Promise<void> => {
-    const username = getCurrentUsername();
-    
-    if (!username) {
-      alert('Vui lòng đăng nhập để mua hàng!');
-      return;
-    }
-
-    setLoading(true);
     try {
-      const response = await itemService.addItemWeb(username, itemId);
-      alert('Đã thêm vào giỏ hàng thành công!');
-      console.log('Response:', response);
+      // Lấy dữ liệu từ localStorage
+      const stored = localStorage.getItem("currentUser");
+      
+      if (!stored) {
+        alert('Vui lòng đăng nhập để mua hàng!');
+        return;
+      }
+
+      const userData = JSON.parse(stored);
+      const authId = userData.auth_id;
+      const accessToken = userData.access_token;
+
+      if (!authId || !accessToken) {
+        alert('Thông tin đăng nhập không hợp lệ!');
+        return;
+      }
+
+      setLoading(true);
+
+      // Gọi API trực tiếp
+      const response = await fetch('/api/add-item-web', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+          'auth-id': authId.toString(),
+        },
+        body: JSON.stringify({
+          id: authId,
+          itemId: itemId
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Đã thêm vào giỏ hàng thành công!');
+        console.log('Response:', data);
+      } else {
+        throw new Error(data.error || 'Không thể thêm vào giỏ hàng');
+      }
     } catch (error) {
       console.error('Error:', error);
-      const errorMessage = typeof error === 'string' ? error : (error as Error)?.message || 'Không thể thêm vào giỏ hàng';
+      const errorMessage = error instanceof Error ? error.message : 'Không thể thêm vào giỏ hàng';
       alert(errorMessage);
     } finally {
       setLoading(false);

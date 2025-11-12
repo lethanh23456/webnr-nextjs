@@ -13,7 +13,7 @@ export default function Navbar() {
   const navItems = [
     { href: "/", label: "TRANG CHỦ" },
     { href: "/sukien", label: "SỰ KIỆN" },
-    { href: "/diendan", label: "DIỄN ĐÀN" },
+    // { href: "/diendan", label: "DIỄN ĐÀN" },
     { href: "/vongquay", label: "VÒNG QUAY" },
     { href: "/bangxh", label: "BẢNG XH" },
     { href: "/user", label: "USER" },

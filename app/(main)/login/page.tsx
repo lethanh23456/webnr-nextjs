@@ -58,7 +58,6 @@ function Login() {
     console.log('Status:', response.status);
 
     if (response.ok) {
-      // Lưu thông tin user vào localStorage
       const userData = {
         ...data,
       };
@@ -69,7 +68,6 @@ function Login() {
       alert('Đăng nhập thành công!');
       router.push('/otp');
     } else {
-      // Hiển thị lỗi từ backend
       if (response.status === 401) {
         alert('Tài khoản hoặc mật khẩu không đúng!');
       } else {
@@ -90,9 +88,7 @@ function Login() {
           <p className="text-white/80 text-base font-medium">Chào mừng bạn quay trở lại</p>
         </div>
 
-        {/* Form */}
         <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-          {/* Username Input */}
           <div className="relative">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 z-[2] pointer-events-none">
               <i className="text-xl text-white/60 transition-all duration-300">👤</i>
@@ -145,7 +141,6 @@ function Login() {
             )}
           </div>
 
-          {/* Form Options */}
           <div className="flex justify-between items-center text-sm">
             <label className="flex items-center text-white/80 cursor-pointer transition-all duration-300 hover:text-white" style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}>
               <input
@@ -166,7 +161,7 @@ function Login() {
             </button>
           </div>
 
-          {/* Submit Button */}
+      
           <button 
             type="submit" 
             disabled={loading} 
@@ -184,7 +179,7 @@ function Login() {
           </button>
         </form>
 
-        {/* Register Link */}
+     
         <div className="mt-5 text-center text-white/80 text-[0.95rem]">
           <span>Chưa có tài khoản? </span>
           <button 
@@ -196,7 +191,7 @@ function Login() {
           </button>
         </div>
 
-        {/* Home Link */}
+       
         <div className="text-center">
           <button 
             onClick={() => router.push("/")} 
