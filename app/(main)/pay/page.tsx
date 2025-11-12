@@ -68,14 +68,12 @@ export default function Pay() {
     bank_owner: "",
   });
 
-  // Withdraw history states
   const [withdrawHistory, setWithdrawHistory] = useState<WithdrawItem[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
   useEffect(() => {
     fetchPayData();
     fetchWithdrawHistory();
-    // Lấy username từ localStorage
     const stored = localStorage.getItem("currentUser");
     if (stored) {
       const userData = JSON.parse(stored);
@@ -167,11 +165,11 @@ export default function Pay() {
         throw new Error("Lỗi khi tải lịch sử rút tiền");
       }
 
-      console.log("✅ Withdraw history:", data);
+      console.log("Withdraw history:", data);
       setWithdrawHistory(data.withdraws || []);
 
     } catch (err) {
-      console.error("❌ Withdraw history error:", err);
+      console.error("Withdraw history error:", err);
     } finally {
       setHistoryLoading(false);
     }
