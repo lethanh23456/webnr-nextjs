@@ -14,7 +14,7 @@ export default function Navbar() {
     { href: "/", label: "TRANG CHỦ" },
     { href: "/sukien", label: "SỰ KIỆN" },
     // { href: "/diendan", label: "DIỄN ĐÀN" },
-    { href: "/vongquay", label: "VÒNG QUAY" },
+    { href: "/shopacc", label: "SHOP ACC" },
     { href: "/bangxh", label: "BẢNG XH" },
     { href: "/user", label: "USER" },
   ]
