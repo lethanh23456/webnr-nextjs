@@ -24,55 +24,64 @@ function Otp() {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      // ✅ Lấy sessionId từ localStorage
-      const stored = localStorage.getItem("currentUser");
-      const sessionId = stored ? JSON.parse(stored).sessionId : null;
-      console.log("🔍 Retrieved sessionId:", sessionId);
+    const stored = localStorage.getItem("currentUser");
+    const sessionId = stored ? JSON.parse(stored).sessionId : null;
 
-      if (!sessionId) {
-        alert("Không tìm thấy sessionId. Vui lòng đăng nhập lại!");
-        return;
-      }
-
-      
-      const response = await fetch("/api/verify-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            otp: formData.otp,
-            sessionId: sessionId,
-        }),
-      });
-
-      const data = await response.json();
-      console.log("Verify OTP response:", data);
-      
-      const dataold = JSON.parse(localStorage.getItem("currentUser") || "{}");
-      if (response.ok) {
-          const userData = {
-          ...dataold,
-          ...data,
-        };
-       localStorage.setItem('currentUser', JSON.stringify(userData));
-        alert("✅ Nhập OTP thành công!");
-        router.push("/"); 
-      } else {
-        const message =
-          Array.isArray(data.message)
-            ? data.message.join(", ")
-            : data.message || "Xác thực OTP thất bại!";
-        alert(message);
-      }
-    } catch (error) {
-      console.error("❌ Lỗi khi verify OTP:", error);
-      alert("Đã xảy ra lỗi không mong đợi!");
-    } finally {
+    if (!sessionId) {
+      alert("Không tìm thấy sessionId. Vui lòng đăng nhập lại!");
       setLoading(false);
+      return;
     }
+
+    const response = await fetch("/api/verify-otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        otp: formData.otp,
+        sessionId: sessionId,
+      }),
+    });
+    const data = await response.json();
+    const dataold = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    if (response.ok) {
+      const userData = {
+        ...dataold,
+        ...data,
+      };
+
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      // await SaveRole();
+      router.push("/");
+    } else {
+      const message = Array.isArray(data.message)
+        ? data.message.join(", ")
+        : data.message || "Xác thực OTP thất bại!";
+      alert(message);
+    }
+
   };
+
+  // const SaveRole = async () => {
+  //   const stored1 = localStorage.getItem("currentUser");
+  //   if (!stored1) {
+  //     console.error("Không tìm thấy currentUser trong localStorage!");
+  //     return;
+  //   }
+  //   const userData = JSON.parse(stored1);
+  //   const authId = userData.auth_id;
+  //   let accessToken = userData.access_token;
+  //   const res1 = await fetch(`/api/profile/${authId}`, {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   });
+  //   const data1 =  await res1.json();
+  //   console.log("data1", data1);
+  // }
+
 
   return (
     <div

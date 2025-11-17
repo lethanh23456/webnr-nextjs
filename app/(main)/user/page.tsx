@@ -118,6 +118,12 @@ export default function User() {
               ID: {user.id} | Auth ID: {user.auth_id}
             </p>
           </div>
+           <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            onClick={() => router.push("/acchistory")} 
+          >
+            lịch sử mua acc
+          </button>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
             onClick={() => router.push("/pay")} 
