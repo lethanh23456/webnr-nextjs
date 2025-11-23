@@ -8,23 +8,23 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const userId = request.nextUrl.searchParams.get('userId');
-  if (!userId) {
-    return NextResponse.json({ error: 'userId is required' }, { status: 400 });
-  }
+  // const userId = request.nextUrl.searchParams.get('userId');
+  // if (!userId) {
+  //   return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+  // }
 
   const amount = request.nextUrl.searchParams.get('amount');
   if (!amount) {
     return NextResponse.json({ error: 'amount is required' }, { status: 400 });
   }
 
-  const username = request.nextUrl.searchParams.get('username');
-  if (!username) {
-    return NextResponse.json({ error: 'username is required' }, { status: 400 });
-  }
+  // const username = request.nextUrl.searchParams.get('username');
+  // if (!username) {
+  //   return NextResponse.json({ error: 'username is required' }, { status: 400 });
+  // }
 
   const response = await fetch(
-    `${BACKEND_URL}/pay/qr?userId=${userId}&amount=${amount}&username=${username}`,
+    `${BACKEND_URL}/pay/qr?amount=${amount}`,
     {
       method: 'GET',
       headers: {
