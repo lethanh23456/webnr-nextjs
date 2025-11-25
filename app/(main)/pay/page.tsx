@@ -256,7 +256,7 @@ export default function Pay() {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          user_id: authId,
+          // user_id: authId,
           amount: parseInt(withdrawForm.amount),
           bank_name: withdrawForm.bank_name,
           bank_number: withdrawForm.bank_number,
