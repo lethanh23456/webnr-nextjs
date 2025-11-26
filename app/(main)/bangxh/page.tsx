@@ -27,7 +27,7 @@ function Bangxh() {
     fetchApi();
   }, []);
 
-  // Helper function để lấy giá trị số từ object hoặc number
+
   const getNumericValue = (value: any): number => {
     if (typeof value === 'number') return value;
     if (value && typeof value === 'object' && 'low' in value) {
@@ -94,7 +94,7 @@ function Bangxh() {
   }
 
   return (
-    <div className="min-h-screen px-5 py-10 pb-[100px] bg-no-repeat bg-center bg-fixed bg-cover" >
+    <div className="min-h-screen px-5 py-10 pb-[100px] bg-no-repeat bg-center bg-fixed bg-cover " style={{ backgroundImage: "url('/assets/br.jpg')" }}>
       {/* Logo Section */}
       <div className="text-center py-[30px] px-5 animate-[fadeInUp_0.8s_ease-out]">
         <img 
