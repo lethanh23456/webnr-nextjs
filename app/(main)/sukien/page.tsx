@@ -58,13 +58,15 @@ function Sukien() {
     }
   };
 
-  if (loading) {
+  if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl">⏳ Đang tải...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin h-16 w-16 border-b-2 border-blue-500 mx-auto rounded-full"></div>
+          <p className="mt-4 text-gray-600">Đang tải thông tin...</p>
+        </div>
       </div>
     );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">

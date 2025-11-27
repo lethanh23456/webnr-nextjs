@@ -82,16 +82,15 @@ function Bangxh() {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  if (loading) {
+  if (loading)
     return (
-      <div className="min-h-screen px-5 py-10 pb-[100px] bg-no-repeat bg-center bg-fixed bg-cover">
-        <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
-          <div className="w-[70px] h-[70px] border-[5px] border-[rgba(255,215,0,0.15)] border-t-yellow-500 rounded-full animate-spin"></div>
-          <p className="text-yellow-500 text-xl font-bold tracking-wide">Đang tải dữ liệu...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin h-16 w-16 border-b-2 border-blue-500 mx-auto rounded-full"></div>
+          <p className="mt-4 text-gray-600">Đang tải thông tin...</p>
         </div>
       </div>
     );
-  }
 
   return (
     <div className="min-h-screen px-5 py-10 pb-[100px] bg-no-repeat bg-center bg-fixed bg-cover " style={{ backgroundImage: "url('/assets/br.jpg')" }}>

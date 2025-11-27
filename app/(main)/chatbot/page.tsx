@@ -39,7 +39,7 @@ function ChatBot() {
         body: JSON.stringify({ tinNhan: userMessage })
       });
 
-      const data = await res.text();
+      const data = await res.json();
       console.log(res);
 
       // Thêm tin nhắn AI vào chat
