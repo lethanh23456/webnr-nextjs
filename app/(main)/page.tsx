@@ -63,9 +63,9 @@ function HomePage() {
 
         <div className="px-5">
           <div className="text-center mb-10">
-            <div className="inline-block bg-gradient-to-br from-yellow-400 to-orange-500 text-white py-4 px-10 rounded-full text-2xl font-bold uppercase tracking-wider shadow-lg shadow-yellow-500/30 relative">
+            <div className="inline-block bg-gradient-to-br from-black-200 to-gray-900 text-white py-4 px-10 rounded-full text-2xl font-bold uppercase tracking-wider shadow-lg shadow-yellow-500/30 relative">
               <span>TẢI GAME</span>
-              <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 rounded-full -z-10 animate-pulse opacity-80"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-black-200 via-gray-900 to-black-200 rounded-full -z-10 animate-pulse opacity-80"></div>
             </div>
           </div>
           
