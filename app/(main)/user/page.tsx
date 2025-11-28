@@ -26,7 +26,6 @@ export default function User() {
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
- 
 
   useEffect(() => {
     fetchUserProfile();
@@ -48,11 +47,9 @@ export default function User() {
 
   const fetchUserProfile = async (isRetry = false) => {
     setLoading(true);
-   
 
     const stored = localStorage.getItem("currentUser");
     if (!stored) {
-
       router.push("/login");
       return;
     }
@@ -77,11 +74,16 @@ export default function User() {
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       setLoading(false);
+      router.push("/login");
       return;
     }
 
     const data: ApiResponse = await res.json();
-    if (data.user) setUser(data.user);
+    if (data.user) {
+      setUser(data.user);
+    } else {
+      router.push("/login");
+    }
 
     setLoading(false);
   };
@@ -98,12 +100,10 @@ export default function User() {
       </div>
     );
 
-  if (!user)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-600">
-        Không tìm thấy thông tin người dùng
-      </div>
-    );
+ 
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-10 px-4">
@@ -118,29 +118,50 @@ export default function User() {
               ID: {user.id} | Auth ID: {user.auth_id}
             </p>
           </div>
-           <button
+          <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-            onClick={() => router.push("/acchistory")} 
+            onClick={() => router.push("/acchistory")}
           >
             lịch sử mua acc
           </button>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-            onClick={() => router.push("/pay")} 
+            onClick={() => {
+              router.push("/shop");
+            }}
+          >
+            shop game
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            onClick={() => {
+              router.push("/chatbot");
+            }}
+          >
+            chatbot
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            onClick={() => {
+              router.push("/change-password");
+            }}
+          >
+            đổi mật khẩu
+          </button>
+           <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            onClick={() => router.push("/pay")}
           >
             tài khoản
           </button>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-            onClick={() => router.push("/login")} 
+            onClick={() => {
+              localStorage.removeItem("currentUser"); 
+              router.push("/login");
+            }}
           >
             đăng xuất
-          </button>
-          <button
-            onClick={() => fetchUserProfile()}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-          >
-            Làm mới
           </button>
         </div>
 
@@ -222,7 +243,6 @@ export default function User() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

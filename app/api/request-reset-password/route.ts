@@ -3,22 +3,16 @@ import { NextRequest, NextResponse } from 'next/server';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000';
 
 export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   const body = await request.json();
 
-  const response = await fetch(`${BACKEND_URL}/ai/ask`, {
+  const response = await fetch(`${BACKEND_URL}/auth/request-reset-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': authHeader,
     },
     body: JSON.stringify(body),
   });
 
-  const data = await response.text();
+  const data = await response.json();
   return NextResponse.json(data, { status: response.status });
 }

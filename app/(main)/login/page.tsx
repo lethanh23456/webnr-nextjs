@@ -154,6 +154,7 @@ function Login() {
             </label>
             <button 
               type="button" 
+              onClick={() => router.push('/reset-password')}
               className="bg-transparent border-none text-cyan-500 cursor-pointer text-sm font-semibold transition-all duration-300 hover:text-amber-400 hover:shadow-[0_0_10px_rgba(251,191,36,0.5)]"
               style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
             >
