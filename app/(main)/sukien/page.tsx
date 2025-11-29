@@ -41,7 +41,6 @@ function Sukien() {
       const data = await response.json();
       console.log('Data from API:', data);
       
-      // ✅ FIX: Lấy data.posts thay vì data trực tiếp
       if (data.posts && Array.isArray(data.posts)) {
         setPosts(data.posts);
         console.log('Posts set successfully:', data.posts);

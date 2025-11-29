@@ -229,7 +229,7 @@ function ShopAcc() {
                     onClick={() => handleViewDetail(account)}
                     className="w-full py-3 rounded-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors"
                   >
-                    👁️ Xem Chi Tiết
+                    Xem Chi Tiết
                   </button>
                 </div>
               </div>
