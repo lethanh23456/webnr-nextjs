@@ -145,7 +145,7 @@ export default function User() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 className="text-2xl font-bold text-gray-700">Thông tin nhân vật</h1>
-                <p className="text-gray-400 text-sm mt-1">Dashboard / Hồ sơ người dùng</p>
+                <p className="text-gray-400 text-sm mt-1">Hồ sơ người dùng</p>
             </div>
             
         
