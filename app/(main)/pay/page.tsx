@@ -97,7 +97,7 @@ export default function Pay() {
       const accessToken = userData.access_token;
       const authId = userData.auth_id;
 
-      console.log("📝 Fetching pay data for user:", authId);
+    
 
       const response = await fetch(`/api/pay?userId=${authId}`, {
         method: "GET",
@@ -107,7 +107,7 @@ export default function Pay() {
         },
       });
 
-      console.log("📡 Response status:", response.status);
+   
 
       const responseText = await response.text();
       let data: PayResponse;
@@ -115,7 +115,7 @@ export default function Pay() {
       try {
         data = JSON.parse(responseText);
       } catch (parseError) {
-        console.error("❌ JSON Parse Error:", parseError);
+
         throw new Error("Server returned invalid JSON");
       }
 
@@ -123,12 +123,11 @@ export default function Pay() {
         throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
 
-      console.log("✅ Pay data:", data);
       setPayData(data.pay);
       setMessage(data.message);
 
     } catch (err) {
-      console.error("❌ Fetch error:", err);
+    
       setError(err instanceof Error ? err.message : "Lỗi không xác định");
     } finally {
       setLoading(false);
@@ -149,7 +148,7 @@ export default function Pay() {
       const accessToken = userData.access_token;
       const authId = userData.auth_id;
 
-      console.log("📝 Fetching withdraw history for user:", authId);
+     
 
       const response = await fetch(`/api/user-withdraw?userId=${authId}`, {
         method: "GET",
@@ -191,7 +190,7 @@ export default function Pay() {
       const accessToken = userData.access_token;
       const authId = userData.auth_id;
 
-      console.log("📝 Generating QR for user:", authId);
+    
 
       const response = await fetch(
         `/api/qr?userId=${authId}&amount=${amount}&username=${username}`,
@@ -210,10 +209,10 @@ export default function Pay() {
         throw new Error(data.error || "Lỗi khi tạo mã QR");
       }
 
-      console.log("✅ QR generated:", data);
+
       setQrData(data);
     } catch (err) {
-      console.error("❌ QR error:", err);
+    
       setQrError(err instanceof Error ? err.message : "Lỗi không xác định");
     } finally {
       setQrLoading(false);
@@ -247,7 +246,7 @@ export default function Pay() {
       const accessToken = userData.access_token;
       const authId = userData.auth_id;
 
-      console.log("📝 Processing withdrawal for user:", authId);
+
 
       const response = await fetch("/api/create-withdraw", {
         method: "POST",
@@ -270,7 +269,7 @@ export default function Pay() {
         throw new Error(data.message || "Lỗi khi tạo yêu cầu rút tiền");
       }
 
-      console.log("✅ Withdrawal created:", data);
+     
       setWithdrawSuccess(data.message || "Yêu cầu rút tiền đã được tạo thành công!");
       
       // Reset form
@@ -289,7 +288,7 @@ export default function Pay() {
       }, 2000);
 
     } catch (err) {
-      console.error("❌ Withdraw error:", err);
+
       setWithdrawError(err instanceof Error ? err.message : "Lỗi không xác định");
     } finally {
       setWithdrawLoading(false);
