@@ -261,7 +261,7 @@ function ShopAcc() {
                   <img
                     src={selectedAccount.url}
                     alt={selectedAccount.description}
-                    className="w-full h-64 object-cover rounded-lg"
+                    className="w-full h-80 object-cover object-top rounded-lg mb-6"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400"%3E%3Crect fill="%23e5e7eb" width="600" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%239ca3af" font-size="24"%3ENo Image%3C/text%3E%3C/svg%3E';
                     }}

@@ -94,7 +94,7 @@ function Sukien() {
                 <img 
                   src={post.url_anh || '/placeholder.jpg'} 
                   alt={post.title}
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                  className="w-full h-80 object-cover object-top rounded-lg mb-6"
                 />
                 {post.status && (
                   <span className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 rounded-full text-sm">
@@ -158,7 +158,7 @@ function Sukien() {
               <img 
                 src={selectedPost.url_anh || '/placeholder.jpg'} 
                 alt={selectedPost.title}
-                className="w-full h-80 object-cover rounded-lg mb-6"
+                className="w-full h-80 object-cover object-top rounded-lg mb-6"
               />
 
               {/* Title */}
