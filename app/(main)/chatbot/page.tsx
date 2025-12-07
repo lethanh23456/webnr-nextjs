@@ -39,11 +39,11 @@ function ChatBot() {
         body: JSON.stringify({ tinNhan: userMessage })
       });
 
-      const data = await res.text();
+      const data = await res.json();
       console.log(res);
 
       // Thêm tin nhắn AI vào chat
-      setMessages(prev => [...prev, { text: data, sender: 'bot', timestamp: new Date() }]);
+      setMessages(prev => [...prev, { text: data.message, sender: 'bot', timestamp: new Date() }]);
     } catch (error) {
       console.error('Error:', error);
       setMessages(prev => [...prev, { text: 'Error getting response', sender: 'bot', timestamp: new Date() }]);
