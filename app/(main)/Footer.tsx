@@ -1,5 +1,6 @@
 import React from "react";
 
+
 function Footer() {
   return (
     <footer className="bg-[#152444] text-white py-10 mt-auto relative overflow-hidden">
