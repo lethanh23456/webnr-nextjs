@@ -631,6 +631,7 @@ export default function Pay() {
                       <label className="block text-gray-700 font-semibold mb-2">
                         Số tiền (VND)
                       </label>
+                      
                       <input
                         type="number"
                         value={amount}
