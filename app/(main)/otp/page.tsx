@@ -102,13 +102,13 @@ function Otp() {
             placeholder="Nhập mã OTP"
             value={formData.otp}
             onChange={handleInputChange}
-            disabled={loading}
+           
             required
             className="w-full h-14 px-4 bg-white/[0.08] border rounded-2xl text-white focus:outline-none focus:border-cyan-500"
           />
           <button
             type="submit"
-            disabled={loading}
+           
             className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 rounded-2xl font-semibold transition-all disabled:opacity-60"
           >
             {loading ? "Đang xác thực..." : "Xác nhận OTP"}

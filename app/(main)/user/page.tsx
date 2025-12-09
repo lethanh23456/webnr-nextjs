@@ -122,7 +122,17 @@ export default function User() {
     setLoading(false);
   };
 
-  const formatNumber = (v: { low: number }) => v.low.toLocaleString();
+  // const formatNumber = (v: { low: number }) => v.low.toLocaleString();
+  const formatNumber = (value: any): number => {
+    if (typeof value === 'number') return value;
+    if (value && typeof value === 'object' && 'low' in value) {
+      const low = value.low || 0;
+      const high = value.high || 0;
+      // Xử lý đúng cho số 64-bit: (high << 32) + (low & 0xFFFFFFFF)
+      return (high * Math.pow(2, 32)) + (low >>> 0); // >>> 0 converts to unsigned
+    }
+    return 0;
+  };
 
   if (loading)
     return (
